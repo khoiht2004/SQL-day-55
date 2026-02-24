@@ -162,7 +162,21 @@ WHERE oi.product_id IS NULL;
 # Bài 9: Tính doanh thu theo từng tháng
 
 ```sql
-
+SELECT
+    DATE_FORMAT(o.order_date, '%m/%Y') AS 'Tháng/Năm',
+    SUM(oi.price_at_purchase * oi.quantity) AS 'Tổng doanh thu',
+    COUNT(DISTINCT o.id) AS 'Số đơn hàng',
+    ROUND(SUM(oi.price_at_purchase * oi.quantity) / COUNT(DISTINCT o.id), 2) AS 'Giá trị đơn trung bình'
+FROM orders o
+JOIN order_items oi ON o.id = oi.order_id
+WHERE o.status = 'completed'
+  AND (
+      (MONTH(o.order_date) = 12 AND YEAR(o.order_date) = 2025)
+      OR
+      (MONTH(o.order_date) = 1 AND YEAR(o.order_date) = 2026)
+  )
+GROUP BY `Tháng/Năm`
+ORDER BY MIN(o.order_date) DESC;
 ```
 
 # Bài 10: Tìm khách hàng trung thành
